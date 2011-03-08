@@ -1,0 +1,40 @@
+= Miniby - Markaby meets HTML5
+
+Markaby's little brother, on diet.
+
+Miniby is just a small experiment I did over my trip to london. Some ideas I wanted to try-out while implementing a Markaby clone.
+Don't expect no support of future development :-)
+
+== Usage
+
+Miniby::SaneHtml and Miniby::FastHtml both work the same programatically but will not output the same thing.
+SaneHtml is meant to be used at development time and will output nicely formatted code while FastHtml does
+minimal check and escaping to double(?) rendering speed.
+
+    Miniby::SaneHtml.new do
+      html do
+        head do
+          title "Hello"
+        end
+        body do
+          h1 "World"
+        end
+      end
+    end.to_s #=> <html><head><title>Hello</title><body><h1>World</h1></body></html>
+
+== Features
+
+* Self-contained
+* Fast(er)
+* Self-validating: exception on unknown tags (NoMethodError) and on unknown attribute (BuildError) (except data- tags)
+* TODO: syntax-compatible with markaby
+
+== Missing features
+
+* !<DOCTYPE>
+* auto <meta charset=utf-8> insertion
+* tag.class_name and tag.id_name!
+
+== Licence
+
+All my code is under public domain. xchar.rb was shamelessly stolen from the builder gem and obeys their licence.
