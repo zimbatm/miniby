@@ -210,11 +210,13 @@ module Miniby
     def serialize_attrs(elem, attrs)
       return '' if attrs.nil? || attrs.empty?
       allowed_keys = ElementAttributes[elem]
-      unauthorized = (attrs.keys.map(&:to_sym) - allowed_keys).reject{|k| k=~/^data[_-]/}
+      unauthorized = (attrs.keys.map(&:to_sym) - allowed_keys).reject{|k| k.to_s=~/^data[_-]/}
       if unauthorized.any?
         raise BuildError, "#{unauthorized.join(', ')} not authorized in #{elem}"
       end
-      ([nil] + attrs.sort.map do |xy|
+      ([nil] + attrs.sort do |obj1, obj2|
+        obj1[0].to_s <=> obj2[0].to_s
+      end.map do |xy|
         key, val = *xy
         key = key.to_s.gsub('_','-').to_sym
         val = val.to_s
@@ -240,23 +242,30 @@ module Miniby
             gsub(/[^\u0000-\u007F]/) {|c| "&##{c.ord};"}.
             force_encoding('ascii')
         end
+        result.untaint
       end
     else
       def escape_html!(text)
-        text.to_xs((@encoding != 'utf-8' or $KCODE != 'UTF8'))
+        text.to_xs.untaint
       end
+    end
+
+    def escape_attr!(text)
+      escape_html!(text).gsub('"', '&quot;')
     end
 
     # symbol === safe
     def escape_html(text)
-      return if text.kind_of? Symbol
-      escape_html!(text.to_s)
+      return text if !text.tainted? || text.kind_of?(Symbol)
+      escape_html!(text)
     end
 
     # symbol === safe
     def escape_attr(text)
-      escape_html!(text).gsub('"', '&quot;')
+      return text if !text.tainted? || text.kind_of?(Symbol)
+      escape_attr!(text)
     end
+
 
     # TODO: nice indent
     def to_s

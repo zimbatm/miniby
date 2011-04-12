@@ -65,15 +65,17 @@ class MinibyTest < MiniTest::Unit::TestCase
   end
 
   def test_attribute_escaping
+    db_attr = "in<je\"ct".taint
     doc = new_doc do
-      input :type=>:text, :value=>"in<je\"ct"
+      input :type=>:text, :value=>db_attr
     end
     assert_equal "<input type=text value=\"in&lt;je&quot;ct\">", doc.to_s
   end
 
   def test_html_escaping
+    db_text = "<script type=\"text\">alert('hohoho');</script>".taint
     doc = new_doc do
-      span "<script type=\"text\">alert('hohoho');</script>"
+      span db_text
     end
     assert_equal "<span>&lt;script type=\"text\"&gt;alert('hohoho');&lt;/script&gt;</span>", doc.to_s
   end
