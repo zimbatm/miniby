@@ -93,7 +93,7 @@ class MinibyTest < MiniTest::Unit::TestCase
 
 end
 class RubyTest < MiniTest::Unit::TestCase
-  def test_recusive_join
+  def test_recursive_join
     x = [:a, [:b, :c], :d]
     assert_equal "a,b,c,d", x.join(',')
   end

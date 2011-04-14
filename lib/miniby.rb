@@ -180,7 +180,7 @@ module Miniby
       if SELF_CLOSING_TAGS.include? elem
         eval <<-TAGDEF, binding, __FILE__, __LINE__+1
           def #{elem}(attrs = {}, &block)
-            railse BuildError, "#{elem} is a self-closing tag" if block_given?
+            raise BuildError, "#{elem} is a self-closing tag" if block_given?
             @_out << "<#{elem}\#{serialize_attrs(#{elem.inspect}, attrs)}>"
             self
           end
